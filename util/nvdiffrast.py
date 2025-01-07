@@ -28,7 +28,7 @@ class MeshRenderer(nn.Module):
         super(MeshRenderer, self).__init__()
 
         x = np.tan(np.deg2rad(rasterize_fov * 0.5)) * znear
-        self.ndc_proj = torch.tensor(ndc_projection(x=x, n=znear, f=zfar)).matmul(
+        self.ndc_proj = torch.tensor(ndc_projection(x=x, n=znear, f=zfar), dtype=torch.float32).matmul(
                 torch.diag(torch.tensor([1., -1, -1, 1])))
         self.rasterize_size = rasterize_size
         self.use_opengl = use_opengl
@@ -47,6 +47,7 @@ class MeshRenderer(nn.Module):
             feat(optional)  -- torch.tensor, size (B, C), features
         """
         device = vertex.device
+        print("##### DEVICE #####:", device)
         rsize = int(self.rasterize_size)
         ndc_proj = self.ndc_proj.to(device)
         # trans to homogeneous coordinates of 3d vertices, the direction of y is the same as v
@@ -77,6 +78,7 @@ class MeshRenderer(nn.Module):
             tri = torch.cat(tri, dim=0)
 
         # for range_mode vetex: [B*N, 4], tri: [B*M, 3], for instance_mode vetex: [B, N, 4], tri: [M, 3]
+        tri = tri.to(device)
         tri = tri.type(torch.int32).contiguous()
         rast_out, _ = dr.rasterize(self.ctx, vertex_ndc.contiguous(), tri, resolution=[rsize, rsize], ranges=ranges)
 
