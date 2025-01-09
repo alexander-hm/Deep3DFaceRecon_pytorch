@@ -1,0 +1,24 @@
+name: deep3d_3.12
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python
+  - pip
+  - pytorch
+  - torchvision
+  - numpy
+  - scikit-image
+  - scipy
+  - pillow
+  - ipython
+  - yaml
+  - pip:
+    - matplotlib
+    - opencv-python
+    - tensorboard
+    - tensorflow
+    - kornia
+    - dominate
+    - trimesh
