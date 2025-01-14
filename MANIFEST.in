@@ -1,0 +1,24 @@
+# Include all Python source files (default behavior of setuptools)
+include *.py
+
+# Include specific data files
+include Deep3DFaceRecon_pytorch/util/test_mean_face.txt
+include Deep3DFaceRecon_pytorch/util/*.txt
+include Deep3DFaceRecon_pytorch/util/*.npy
+
+# Include pretrained models (checkpoints)
+recursive-include Deep3DFaceRecon_pytorch/checkpoints *
+
+# Include BFM model (face model)
+recursive-include Deep3DFaceRecon_pytorch/BFM *
+
+# Include README and license files
+include README.md
+include LICENSE
+
+# Exclude unwanted files (e.g., temporary files or system files)
+global-exclude *.pyc
+global-exclude __pycache__
+global-exclude .DS_Store
+global-exclude .git
+global-exclude .ipynb_checkpoints

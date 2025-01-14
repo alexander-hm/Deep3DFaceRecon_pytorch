@@ -3,6 +3,9 @@ checkpoints/*
 temp/*
 *__pycache__*
 
+# Build files
+build
+
 # Large BFM files
 BFM/01_MorphableModel.mat
 BFM/BFM_model_front.mat

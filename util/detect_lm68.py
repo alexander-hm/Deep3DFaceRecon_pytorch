@@ -7,7 +7,13 @@ import tensorflow.compat.v1 as tf
 from util.preprocess import align_for_lm
 from shutil import move
 
-mean_face = np.loadtxt('util/test_mean_face.txt')
+# Get the directory where this script resides
+UTIL_DIR = os.path.dirname(os.path.abspath(__file__))
+# Construct the full path to the test_mean_face.txt file
+mean_face_path = os.path.join(UTIL_DIR, 'test_mean_face.txt')
+
+# mean_face = np.loadtxt('util/test_mean_face.txt')
+mean_face = np.loadtxt(mean_face_path)
 mean_face = mean_face.reshape([68, 2])
 
 def save_label(labels, save_path):

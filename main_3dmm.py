@@ -17,6 +17,8 @@ from util.generate_list import check_list, write_list
 # from options.test_options import TestOptions
 from options.facellm_options import TestOptions
 
+PACKAGE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 def detect_keypoints_and_save(image_path):
     """
     Detects 5 facial keypoints using MTCNN and saves them in a text file.
@@ -79,7 +81,7 @@ def read_data(im_path, lm_path, lm3d_std, to_tensor=True):
         lm = torch.tensor(lm).unsqueeze(0)
     return im, lm
 
-def process_image(rank, opt, image_path='examples', temp_dir='./temp'):
+def process_image(rank, opt, image_path='examples'):
     """
     Takes a single image and runs face reconstruction to return 3DMM coefficients and landmarks.
 
@@ -104,11 +106,13 @@ def process_image(rank, opt, image_path='examples', temp_dir='./temp'):
     if not os.path.isfile(landmark_path):
         raise FileNotFoundError(f"Temp landmark file not found: {landmark_path}")
 
+    print("OPT:", opt)
     opt.img_folder = temp_dir
     name = temp_image_path
 
+    print("OPT:", opt)
+
     # Step 4: Initialize face reconstruction model
-    opt = TestOptions().parse()
     device = torch.device(rank)
     torch.cuda.set_device(device)
     model = create_model(opt)
@@ -147,6 +151,24 @@ def process_image(rank, opt, image_path='examples', temp_dir='./temp'):
         "coefficients": coeff,
         "landmarks": landmarks
     }
+
+def get_3dmm(img_path: str):
+    # Get cuda device
+    rank = torch.cuda.current_device()
+
+    # Initialize model params
+    opt = TestOptions().parse()
+    opt.name = "face_recon_v0"
+    opt.epoch = 20
+    opt.img_path = img_path
+    opt.use_opengl = False
+
+    # Set checkpoints dir
+    opt.checkpoints_dir = os.path.join(PACKAGE_DIR, 'checkpoints')
+    opt.bfm_folder = os.path.join(PACKAGE_DIR, 'BFM')
+
+    # Generate 3dmm params
+    return process_image(rank, opt, img_path)
 
 if __name__ == '__main__':
     opt = TestOptions().parse()  # get test options
