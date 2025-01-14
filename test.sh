@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=0 python test.py --name=face_recon_v0 --epoch=20 --img_folder=./datasets/examples --use_opengl False

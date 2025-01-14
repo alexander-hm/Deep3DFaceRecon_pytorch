@@ -50,11 +50,17 @@ class ParametricFaceModel:
         # texture basis. [3*N,80]
         self.tex_base = model['texBase'].astype(np.float32)
         # face indices for each vertex that lies in. starts from 0. [N,8]
-        self.point_buf = model['point_buf'].astype(np.int64) - 1
+        self.point_buf = torch.from_numpy(
+            model['point_buf'].astype(np.int64) - 1
+        )
         # vertex indices for each face. starts from 0. [F,3]
-        self.face_buf = model['tri'].astype(np.int64) - 1
+        self.face_buf = torch.from_numpy(
+            model['tri'].astype(np.int64) - 1
+        )
         # vertex indices for 68 landmarks. starts from 0. [68,1]
-        self.keypoints = np.squeeze(model['keypoints']).astype(np.int64) - 1
+        self.keypoints = torch.from_numpy(
+            np.squeeze(model['keypoints']).astype(np.int64) - 1            
+        )
 
         if is_train:
             # vertex indices for small face region to compute photometric error. starts from 0.
@@ -80,7 +86,7 @@ class ParametricFaceModel:
         self.device = device
         for key, value in self.__dict__.items():
             if type(value).__module__ == np.__name__:
-                setattr(self, key, torch.tensor(value).to(device))
+                setattr(self, key, torch.tensor(value, dtype=torch.float32).to(device))
 
     
     def compute_shape(self, id_coeff, exp_coeff):

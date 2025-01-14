@@ -1,0 +1,16 @@
+# Temporary files
+checkpoints/*
+temp/*
+*__pycache__*
+
+# Large BFM files
+BFM/01_MorphableModel.mat
+BFM/BFM_model_front.mat
+BFM/Exp_Pca.bin
+
+# Model files
+models/arcface_torch
+
+# Cloned nested repositories
+nvdiffrast
+insightface
