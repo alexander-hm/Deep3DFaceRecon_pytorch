@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=0 python main_3dmm.py --name=face_recon_v0 --epoch=20 --img_path=./datasets/3dmm_test/000002.jpg --use_opengl False
