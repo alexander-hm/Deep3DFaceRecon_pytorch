@@ -20,5 +20,4 @@ setup(
     description="A package for 3D face reconstruction using Deep3DFaceRecon_pytorch.",
     author="Your Name",
     author_email="your.email@example.com",
-    url="https://github.com/your-github-repo",  # Optional
 )

@@ -18,6 +18,7 @@ from util.generate_list import check_list, write_list
 from options.facellm_options import TestOptions
 
 PACKAGE_DIR = os.path.dirname(os.path.abspath(__file__))
+SAVE_INTERMEDIATES = True
 
 def detect_keypoints_and_save(image_path):
     """
@@ -110,6 +111,9 @@ def process_image(rank, opt, image_path='examples'):
     opt.img_folder = temp_dir
     name = temp_image_path
 
+    print("NAME:", name)
+    print("Name_Mod:", name.split(os.path.sep)[-1])
+
     print("OPT:", opt)
 
     # Step 4: Initialize face reconstruction model
@@ -133,12 +137,13 @@ def process_image(rank, opt, image_path='examples'):
     model.test()
 
     # Save intermediate files
-    visuals = model.get_current_visuals()  # get image results
-    visualizer.display_current_results(visuals, 0, opt.epoch, dataset=name.split(os.path.sep)[-1], 
-        save_results=True, count=0, name=name.split(os.path.sep)[-1], add_image=False)
+    if SAVE_INTERMEDIATES:
+        visuals = model.get_current_visuals()  # get image results
+        visualizer.display_current_results(visuals, 0, opt.epoch, dataset=name.split(os.path.sep)[-1], 
+            save_results=True, count=0, name=img_name, add_image=False)
 
-    model.save_mesh(os.path.join(visualizer.img_dir, name.split(os.path.sep)[-1], 'epoch_%s_%06d'%(opt.epoch, 0),img_name+'.obj')) # save reconstruction meshes
-    model.save_coeff(os.path.join(visualizer.img_dir, name.split(os.path.sep)[-1], 'epoch_%s_%06d'%(opt.epoch, 0),img_name+'.mat')) # save predicted coefficients
+        model.save_mesh(os.path.join(visualizer.img_dir, name.split(os.path.sep)[-1], 'epoch_%s_%06d'%(opt.epoch, 0),img_name+'.obj')) # save reconstruction meshes
+        model.save_coeff(os.path.join(visualizer.img_dir, name.split(os.path.sep)[-1], 'epoch_%s_%06d'%(opt.epoch, 0),img_name+'.mat')) # save predicted coefficients
 
 
     coeff, landmarks = model.get_coeff()  # Replace with the correct method to retrieve coefficients

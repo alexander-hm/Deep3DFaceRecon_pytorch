@@ -2,6 +2,7 @@
 checkpoints/*
 temp/*
 *__pycache__*
+*.egg-info*
 
 # Build files
 build
