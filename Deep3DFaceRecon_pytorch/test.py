@@ -2,16 +2,16 @@
 """
 
 import os
-from options.test_options import TestOptions
-from data import create_dataset
-from models import create_model
-from util.visualizer import MyVisualizer
-from util.preprocess import align_img
+from Deep3DFaceRecon_pytorch.options.test_options import TestOptions
+from Deep3DFaceRecon_pytorch.data import create_dataset
+from Deep3DFaceRecon_pytorch.models import create_model
+from Deep3DFaceRecon_pytorch.util.visualizer import MyVisualizer
+from Deep3DFaceRecon_pytorch.util.preprocess import align_img
 from PIL import Image
 import numpy as np
-from util.load_mats import load_lm3d
+from Deep3DFaceRecon_pytorch.util.load_mats import load_lm3d
 import torch 
-from data.flist_dataset import default_flist_reader
+from Deep3DFaceRecon_pytorch.data.flist_dataset import default_flist_reader
 from scipy.io import loadmat, savemat
 
 def get_data_path(root='examples'):

@@ -5,17 +5,17 @@ import torch
 import numpy as np
 from PIL import Image
 from mtcnn import MTCNN
-from util.detect_lm68 import detect_68p, load_lm_graph
-from util.skin_mask import get_skin_mask
-from util.preprocess import align_img
-from util.load_mats import load_lm3d
-from models import create_model
-from util.visualizer import MyVisualizer
-from util.generate_list import check_list, write_list
+from Deep3DFaceRecon_pytorch.util.detect_lm68 import detect_68p, load_lm_graph
+from Deep3DFaceRecon_pytorch.util.skin_mask import get_skin_mask
+from Deep3DFaceRecon_pytorch.util.preprocess import align_img
+from Deep3DFaceRecon_pytorch.util.load_mats import load_lm3d
+from Deep3DFaceRecon_pytorch.models import create_model
+from Deep3DFaceRecon_pytorch.util.visualizer import MyVisualizer
+from Deep3DFaceRecon_pytorch.util.generate_list import check_list, write_list
 
 
 # from options.test_options import TestOptions
-from options.facellm_options import TestOptions
+from Deep3DFaceRecon_pytorch.options.facellm_options import TestOptions
 
 PACKAGE_DIR = os.path.dirname(os.path.abspath(__file__))
 SAVE_INTERMEDIATES = True

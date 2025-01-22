@@ -7,9 +7,9 @@ from .base_model import BaseModel
 from . import networks
 from .bfm import ParametricFaceModel
 from .losses import perceptual_loss, photo_loss, reg_loss, reflectance_loss, landmark_loss
-from util import util 
-from util.nvdiffrast import MeshRenderer
-from util.preprocess import estimate_norm_torch
+from Deep3DFaceRecon_pytorch.util import util 
+from Deep3DFaceRecon_pytorch.util.nvdiffrast import MeshRenderer
+from Deep3DFaceRecon_pytorch.util.preprocess import estimate_norm_torch
 
 import trimesh
 from scipy.io import savemat

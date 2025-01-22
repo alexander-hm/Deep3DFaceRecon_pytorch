@@ -3,11 +3,11 @@
 
 import argparse
 import os
-from util import util
+from Deep3DFaceRecon_pytorch.util import util
 import numpy as np
 import torch
-import models
-import data
+import Deep3DFaceRecon_pytorch.models as models
+import Deep3DFaceRecon_pytorch.data as data
 
 
 class BaseOptions():

@@ -4,9 +4,9 @@
 import os 
 import numpy as np
 import argparse
-from util.detect_lm68 import detect_68p,load_lm_graph
-from util.skin_mask import get_skin_mask
-from util.generate_list import check_list, write_list
+from Deep3DFaceRecon_pytorch.util.detect_lm68 import detect_68p,load_lm_graph
+from Deep3DFaceRecon_pytorch.util.skin_mask import get_skin_mask
+from Deep3DFaceRecon_pytorch.util.generate_list import check_list, write_list
 import warnings
 warnings.filterwarnings("ignore") 
 

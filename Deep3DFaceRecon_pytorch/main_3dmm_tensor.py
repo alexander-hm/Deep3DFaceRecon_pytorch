@@ -1,19 +1,24 @@
 import os
+import sys
 import shutil
 import tempfile
 import torch
 import numpy as np
 from PIL import Image
 from mtcnn import MTCNN
-from util.preprocess import align_img
-from util.load_mats import load_lm3d
-from util.util import tensor2im
-from models import create_model
-from util.visualizer import MyVisualizer
-from options.facellm_options import TestOptions
+from Deep3DFaceRecon_pytorch.util.preprocess import align_img
+from Deep3DFaceRecon_pytorch.util.load_mats import load_lm3d
+from Deep3DFaceRecon_pytorch.util.util import tensor2im
+from Deep3DFaceRecon_pytorch.models import create_model
+from Deep3DFaceRecon_pytorch.util.visualizer import MyVisualizer
+from Deep3DFaceRecon_pytorch.options.facellm_options import TestOptions
 
 # from options.test_options import TestOptions
-from options.facellm_options import TestOptions
+from Deep3DFaceRecon_pytorch.options.facellm_options import TestOptions
+
+# Add the Deep3DFaceRecon_pytorch directory to the PYTHONPATH
+sys.path.append(os.path.join(os.path.dirname(__file__), '../Deep3D_v1/Deep3DFaceRecon_pytorch'))
+
 
 PACKAGE_DIR = os.path.dirname(os.path.abspath(__file__))
 SAVE_INTERMEDIATES = True
@@ -28,15 +33,19 @@ def detect_keypoints(img_tensor):
     Returns:
         list: List of detected keypoints.
     """
+    
+    # Print the shape of the input tensor
+    print(f"Shape of img_tensor: {img_tensor.shape}")
+
     # Convert tensor to PIL image
     img = tensor2im(img_tensor)
-    img = Image.fromarray(img)
+    # img = Image.fromarray(img)
 
     # Initialize MTCNN detector
     detector = MTCNN()
 
     # Detect faces
-    detection, _ = detector.detect(img)
+    detection = detector.detect_faces(img)
 
     # Check if any face was detected
     if len(detection) == 0:
@@ -46,13 +55,13 @@ def detect_keypoints(img_tensor):
     keypoints = detection[0]['keypoints']
 
     # Format keypoints for saving
-    keypoints_list = [
+    keypoints_list = np.array([
         [keypoints['left_eye'][0], keypoints['left_eye'][1]],
         [keypoints['right_eye'][0], keypoints['right_eye'][1]],
         [keypoints['nose'][0], keypoints['nose'][1]],
         [keypoints['mouth_left'][0], keypoints['mouth_left'][1]],
         [keypoints['mouth_right'][0], keypoints['mouth_right'][1]],
-    ]
+    ])
 
     return keypoints_list
 
@@ -67,14 +76,18 @@ def process_image(rank, opt, img_tensor):
     # Load landmarks
     lm3d_std = load_lm3d(opt.bfm_folder)
 
-    # Convert image tensor to appropriate format
+    # Convert image tensor to appropriate formats
     img_tensor = img_tensor.unsqueeze(0).to(model.device)  # Add batch dimension and move to device
+    
+    # Convert tensor to numpy array and then to PIL image for align_img function
+    img_numpy = tensor2im(img_tensor)
+    img_pil = Image.fromarray(img_numpy)
 
     # Detect keypoints
     keypoints = detect_keypoints(img_tensor)
 
     # Align image based on keypoints and standard landmarks
-    img_aligned, lm_aligned = align_img(img_tensor, keypoints, lm3d_std)
+    _, img_aligned, lm_aligned, _ = align_img(img_pil, keypoints, lm3d_std)
 
     # Convert aligned image and landmarks to tensors
     im_tensor = torch.tensor(np.array(img_aligned)/255., dtype=torch.float32).permute(2, 0, 1).unsqueeze(0)
@@ -123,6 +136,9 @@ if __name__ == '__main__':
     opt = TestOptions().parse()  # get test options
     result = process_image(0, opt, opt.img_path)
     print("Coefficients:", len(result['coefficients']))
+    for i in range(len(result['coefficients'])):
+        print("Coefficient", result['coefficients'][i])
+        print(result['coefficients'][i].shape)
     print("Landmarks:", len(result['landmarks']))
   
     
