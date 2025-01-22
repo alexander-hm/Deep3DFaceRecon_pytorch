@@ -1,5 +1,5 @@
 # Temporary files
-*checkpoints/*
+checkpoints/*
 temp/*
 *__pycache__*
 *.egg-info*
@@ -8,9 +8,9 @@ temp/*
 build
 
 # Large BFM files
-*BFM/01_MorphableModel.mat
-*BFM/BFM_model_front.mat
-*BFM/Exp_Pca.bin
+BFM/01_MorphableModel.mat
+BFM/BFM_model_front.mat
+BFM/Exp_Pca.bin
 
 # Model files
 models/arcface_torch

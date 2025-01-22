@@ -6,9 +6,20 @@ setup(
     packages=find_packages(),
     install_requires=[
         "torch",
-        "mtcnn",
-        "Pillow",
+        "torchvision",
         "numpy",
+        "scikit-image",
+        "scipy",
+        "pillow",
+        "ipython",
+        "pyyaml",  # YAML package in pip
+        "matplotlib",
+        "opencv-python",
+        "tensorboard",
+        "tensorflow",
+        "kornia",
+        "dominate",
+        "trimesh",
     ],
     include_package_data=True,
     package_data={
@@ -18,6 +29,6 @@ setup(
         "Deep3DFaceRecon_pytorch.BFM": ["*"],  # Include all BFM files
     },
     description="A package for 3D face reconstruction using Deep3DFaceRecon_pytorch.",
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="Alexander Huang-Menders",
+    author_email="alexander.huang-menders.25@dartmouth.edu",
 )

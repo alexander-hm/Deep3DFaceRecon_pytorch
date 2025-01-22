@@ -6,4 +6,5 @@ BaseModel has a save_dir field. The mesh save/export function takes a name, whic
 * ) Make Deep3D function img --> 3DMM params for use by LLM
 * Unpack LLM code to figure out where to call Deep3D function
 * Figure out how to tokenize 3DMM params
-* NEST REPOSITORIES
+* ) NEST REPOSITORIES
+* ) Make Deep3D a package
