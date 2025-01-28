@@ -13,15 +13,12 @@ from Deep3DFaceRecon_pytorch.models import create_model
 from Deep3DFaceRecon_pytorch.util.visualizer import MyVisualizer
 from Deep3DFaceRecon_pytorch.options.facellm_options import TestOptions
 
-# from options.test_options import TestOptions
-from Deep3DFaceRecon_pytorch.options.facellm_options import TestOptions
-
 # Add the Deep3DFaceRecon_pytorch directory to the PYTHONPATH
 sys.path.append(os.path.join(os.path.dirname(__file__), '../Deep3D_v1/Deep3DFaceRecon_pytorch'))
 
 
 PACKAGE_DIR = os.path.dirname(os.path.abspath(__file__))
-SAVE_INTERMEDIATES = True
+SAVE_INTERMEDIATES = False
 
 def detect_keypoints(img_tensor):
     """
@@ -66,18 +63,23 @@ def detect_keypoints(img_tensor):
     return keypoints_list
 
 def process_image(rank, opt, img_tensor):
+    print("process_image input opt:", type(opt), opt)
+    print("process_image input img_tensor:", type(img_tensor), img_tensor.shape, img_tensor.dtype)
+    print("DEEP3D RANK:", rank)
+
     # Create model
     model = create_model(opt)
     model.setup(opt)
     model.device = torch.device(f'cuda:{rank}')
     model.parallelize()
-    model.eval()
+    with torch.no_grad():
+        model.eval()
 
     # Load landmarks
     lm3d_std = load_lm3d(opt.bfm_folder)
 
     # Convert image tensor to appropriate formats
-    img_tensor = img_tensor.unsqueeze(0).to(model.device)  # Add batch dimension and move to device
+    img_tensor = img_tensor.to(model.device)  # Add batch dimension and move to device
     
     # Convert tensor to numpy array and then to PIL image for align_img function
     img_numpy = tensor2im(img_tensor)
@@ -91,12 +93,13 @@ def process_image(rank, opt, img_tensor):
 
     # Convert aligned image and landmarks to tensors
     im_tensor = torch.tensor(np.array(img_aligned)/255., dtype=torch.float32).permute(2, 0, 1).unsqueeze(0)
-    lm_tensor = torch.tensor(lm_aligned).unsqueeze(0)
+    lm_tensor = torch.tensor(lm_aligned, dtype=torch.float32).unsqueeze(0)
 
     # Generate 3DMM parameters
     data = {'imgs': im_tensor.to(model.device), 'lms': lm_tensor.to(model.device)}
     model.set_input(data)
-    model.test()
+    with torch.no_grad():
+        model.test()
 
     # Save intermediate files if needed
     if SAVE_INTERMEDIATES:
@@ -108,6 +111,9 @@ def process_image(rank, opt, img_tensor):
 
     coefficients, landmarks = model.get_coeff()  # Replace with the correct method to retrieve coefficients
 
+    # Clear unused memory
+    torch.cuda.empty_cache()
+
     return {
         "coefficients": coefficients,
         "landmarks": landmarks
@@ -115,10 +121,14 @@ def process_image(rank, opt, img_tensor):
 
     
 def get_3dmm(img_tensor: torch.Tensor):
+    
+    print("get_3dmm input:", type(img_tensor), img_tensor.shape)
+
     # Get cuda device
     rank = torch.cuda.current_device()
 
     # Initialize model params
+    # opt = TestOptions().parse()
     opt = TestOptions().parse()
     opt.name = "face_recon_v0"
     opt.epoch = 20
@@ -127,6 +137,9 @@ def get_3dmm(img_tensor: torch.Tensor):
     # Set checkpoints dir
     opt.checkpoints_dir = os.path.join(PACKAGE_DIR, 'checkpoints')
     opt.bfm_folder = os.path.join(PACKAGE_DIR, 'BFM')
+
+    # Clear unused memory
+    torch.cuda.empty_cache()
 
     # Generate 3dmm params
     return process_image(rank, opt, img_tensor)

@@ -133,6 +133,7 @@ class FaceReconModel(BaseModel):
 
     def forward(self):
         output_coeff = self.net_recon(self.input_img)
+        # print("OUTPUT COEFF:", type(output_coeff), output_coeff.shape)
         self.facemodel.to(self.device)
         self.pred_vertex, self.pred_tex, self.pred_color, self.pred_lm = \
             self.facemodel.compute_for_render(output_coeff)

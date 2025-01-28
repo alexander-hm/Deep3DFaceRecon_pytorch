@@ -71,9 +71,11 @@ def tensor2im(input_image, imtype=np.uint8):
             image_tensor = input_image.data
         else:
             return input_image
+        # print("Tensor2Im 1: ", image_tensor.shape)
         if image_tensor.dim() == 4:  # Handle batch dimension
             image_tensor = image_tensor[0]
         image_numpy = image_tensor.clamp(0.0, 1.0).cpu().float().numpy()  # convert it into a numpy array
+        # print("Tensor2Im 2: ", image_tensor.shape)
         if image_numpy.shape[0] == 1:  # grayscale to RGB
             image_numpy = np.tile(image_numpy, (3, 1, 1))
         image_numpy = np.transpose(image_numpy, (1, 2, 0)) * 255.0  # post-processing: tranpose and scaling

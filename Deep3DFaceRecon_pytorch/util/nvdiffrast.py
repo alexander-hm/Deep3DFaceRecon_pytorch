@@ -47,7 +47,9 @@ class MeshRenderer(nn.Module):
             feat(optional)  -- torch.tensor, size (B, C), features
         """
         device = vertex.device
-        print("##### DEVICE #####:", device)
+        # print("##### DEVICE #####:", device)
+        # print("##### VERTEX #####:", vertex.dtype, vertex.shape)
+        # print("##### TRI #####:", tri.dtype, tri.shape)
         rsize = int(self.rasterize_size)
         ndc_proj = self.ndc_proj.to(device)
         # trans to homogeneous coordinates of 3d vertices, the direction of y is the same as v
@@ -79,8 +81,11 @@ class MeshRenderer(nn.Module):
 
         # for range_mode vetex: [B*N, 4], tri: [B*M, 3], for instance_mode vetex: [B, N, 4], tri: [M, 3]
         tri = tri.to(device)
-        tri = tri.type(torch.int32).contiguous()
-        rast_out, _ = dr.rasterize(self.ctx, vertex_ndc.contiguous(), tri, resolution=[rsize, rsize], ranges=ranges)
+        tri = tri.to(torch.int32).contiguous()
+        vertex_ndc = vertex_ndc.to(device)
+        vertex_ndc = vertex_ndc.to(torch.float32).contiguous()
+        # print("##### VERTEX_NDC #####:", vertex_ndc.dtype)
+        rast_out, _ = dr.rasterize(self.ctx, vertex_ndc, tri, resolution=[rsize, rsize], ranges=ranges)
 
         depth, _ = dr.interpolate(vertex.reshape([-1,4])[...,2].unsqueeze(1).contiguous(), rast_out, tri) 
         depth = depth.permute(0, 3, 1, 2)
